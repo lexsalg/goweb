@@ -1,55 +1,75 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
+	"text/template"
 )
 
-type customHandler func(http.ResponseWriter, *http.Request)
-
-type MuxAlexis struct {
-	rutasAlexis map[string]customHandler //handlers
+type Curso struct {
+	Nombre   string
+	Duracion int
 }
 
-func (m *MuxAlexis) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	fn := m.rutasAlexis[r.URL.Path]
-	fn(w, r)
+type Usuario struct {
+	Username      string
+	Edad          int
+	Activo        bool
+	Administrador bool
+	Tags          []string
+	Cursos        []Curso
 }
 
-func (m *MuxAlexis) AddMux(ruta string, fn customHandler) {
-	m.rutasAlexis[ruta] = fn
+func (u Usuario) TienePermisoAdmin() bool {
+	return u.Activo && u.Administrador
+}
+
+func (u Usuario) EsAdmin(llave string) bool {
+	return u.Administrador && llave == "si"
+}
+
+func hola() string {
+	return "hola desde uan funcion"
+}
+
+func suma(a, b int) int {
+	return a + b
 }
 func main() {
-	newMap := make(map[string]customHandler)
-	mux := &MuxAlexis{rutasAlexis: newMap}
-	mux.AddMux("/hola", func(w http.ResponseWriter, r *http.Request) {
-		_, _ = fmt.Fprintf(w, "hola desde una funcion anonima")
+
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+
+		//tpl, err := template.New("hola").Parse("hola alexis tpl")
+		//tpl, err := template.ParseFiles("templates/index.html") //parse files como funcion
+
+		funciones := template.FuncMap{
+			"hola": hola,
+			"suma": suma,
+		}
+
+		tpl, err := template.New("index.html").Funcs(funciones).
+			ParseFiles("templates/index.html", "templates/footer.html", "templates/header.html") //parse files como metodo
+		if err != nil {
+			panic(err)
+		}
+		tags := []string{"go", "python", "c#", "c++", "java"}
+		cursos := []Curso{
+			{"python", 1},
+			{"jave", 2},
+			{"go", 3},
+		}
+		usuario := Usuario{
+			Username:      "Alexis",
+			Edad:          22,
+			Activo:        true,
+			Administrador: true,
+			Tags:          tags,
+			Cursos:        cursos,
+		}
+
+		_ = tpl.Execute(w, usuario)
+
 	})
-
-	log.Fatal(http.ListenAndServe("localhost:3000", mux))
+	log.Println("el servidor escucha:3000")
+	log.Fatal(http.ListenAndServe("localhost:3000", nil))
 }
-
-//func main() {
-//
-//	redirect := http.RedirectHandler("http://www.dev-bug.com", http.StatusMovedPermanently)
-//	notFound := http.NotFoundHandler()
-//
-//	//http.Handle("/redirect", redirect)
-//	//http.Handle("/not", notFound)
-//	//
-//	//server := &http.Server{
-//	//	Addr:    "localhost:3000",
-//	//	Handler: nil,
-//	//}
-//	mux := http.NewServeMux()
-//	mux.Handle("/redirect", redirect)
-//	mux.Handle("/not", notFound)
-//
-//	server := &http.Server{
-//		Addr:    "localhost:3000",
-//		Handler: mux,
-//	}
-//
-//	log.Fatal(server.ListenAndServe())
-//}

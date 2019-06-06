@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Alexis</title>
+</head>
+<body>
+{{template "header"}}
+<h3>---------------------------ATRIBUTOS OBJETO-----------------------------------------------</h3>
+<h1>hola usuario {{.Username}}</h1>
+<h1>hola usuario {{.Edad}}</h1>
+<h1>hola usuario {{.Activo}}</h1>
+<h1>hola usuario {{.Administrador}}</h1>
+{{if .Activo}}
+    <p>el usuario esta activo</p>
+{{else}}
+    <p>el usuario esta no activo</p>
+{{end}}
+
+{{if (or .Activo .Administrador) }}
+    <p>es activo y admin</p>
+{{else}}
+    <p>el usuario no activo y no admin</p>
+{{end}}
+
+
+{{if (lt .Edad 30) }}
+    <p>el usuario es menor a 30</p>
+{{else}}
+    <p>el usuario es mayor= a 30</p>
+{{end}}
+
+<h3>---------------------------CICLOS-----------------------------------------------</h3>
+<h4>Tags</h4>
+<ul>
+    {{range .Tags}}
+        <li>{{.}}</li>
+    {{end}}
+</ul>
+
+<h4>CURSOS</h4>
+<ul>
+    {{range .Cursos}}
+        <li>el curso: {{.Nombre}} dura: {{.Duracion}} horas</li>
+    {{end}}
+</ul>
+
+<h3>---------------------------VARIABLES-----------------------------------------------</h3>
+{{with $variable:="ALEXIS"}}
+    <p>{{$variable}}</p>
+{{end }}
+
+<h3>---------------------------funciones- y fun con parametros----------------------------------------------</h3>
+{{ if .TienePermisoAdmin}}
+    <p> esta activo y es admin</p>
+{{end }}
+
+{{ if .EsAdmin "si"}}
+    <p> esta con parametro si</p>
+{{end }}
+
+{{ if .EsAdmin "no"}}
+    <p> esta activo y es admin</p>
+{{end }}
+
+<h3>---------------------------funcion variable----------------------------------------------</h3>
+{{hola}}
+
+<p>funcion suma {{suma 4 6}}</p>
+
+
+{{template "footer"}}
+{{template "footer"}}
+{{template "footer"}}
+</body>
+</html>
