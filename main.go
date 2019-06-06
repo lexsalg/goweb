@@ -2,45 +2,54 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
-	"net/url"
 )
 
-func createURL2() string {
-	u, err := url.Parse("/params")
-	if err != nil {
-		panic(err)
-	}
-	u.Host = "localhost:3000"
-	u.Scheme = "http"
-	query := u.Query()
-	query.Add("nombre", "valor")
-	u.RawQuery = query.Encode()
-	return u.String()
+type customHandler func(http.ResponseWriter, *http.Request)
+
+type MuxAlexis struct {
+	rutasAlexis map[string]customHandler //handlers
 }
 
+func (m *MuxAlexis) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	fn := m.rutasAlexis[r.URL.Path]
+	fn(w, r)
+}
+
+func (m *MuxAlexis) AddMux(ruta string, fn customHandler) {
+	m.rutasAlexis[ruta] = fn
+}
 func main() {
+	newMap := make(map[string]customHandler)
+	mux := &MuxAlexis{rutasAlexis: newMap}
+	mux.AddMux("/hola", func(w http.ResponseWriter, r *http.Request) {
+		_, _ = fmt.Fprintf(w, "hola desde una funcion anonima")
+	})
 
-	URL := createURL2()
-	request, err := http.NewRequest("GET", URL, nil)
-	if err != nil {
-		panic(err)
-	}
-
-	client := &http.Client{}
-	response, err := client.Do(request)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("el header es:", response.Header)
-	body, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("el body es:", string(body))
-	fmt.Println("el status es:", response.Status)
-
-	log.Fatal(http.ListenAndServe("localhost:3000", nil))
+	log.Fatal(http.ListenAndServe("localhost:3000", mux))
 }
+
+//func main() {
+//
+//	redirect := http.RedirectHandler("http://www.dev-bug.com", http.StatusMovedPermanently)
+//	notFound := http.NotFoundHandler()
+//
+//	//http.Handle("/redirect", redirect)
+//	//http.Handle("/not", notFound)
+//	//
+//	//server := &http.Server{
+//	//	Addr:    "localhost:3000",
+//	//	Handler: nil,
+//	//}
+//	mux := http.NewServeMux()
+//	mux.Handle("/redirect", redirect)
+//	mux.Handle("/not", notFound)
+//
+//	server := &http.Server{
+//		Addr:    "localhost:3000",
+//		Handler: mux,
+//	}
+//
+//	log.Fatal(server.ListenAndServe())
+//}

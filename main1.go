@@ -6,44 +6,24 @@ import (
 	"net/http"
 )
 
-func main1() {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("el metodo es:", r.Method)
-		w.Header().Add("alexis", "prueba de heder")
-		//_, _ = fmt.Fprintln(w, "hola mundo")
-		//http.Redirect(w, r, "/dos", http.StatusMovedPermanently)
-		http.Redirect(w, r, "https://www.dev-bug.com", http.StatusMovedPermanently)
-	})
+func Holax(w http.ResponseWriter, r *http.Request) {
+	_, _ = fmt.Fprintf(w, "hola mundo")
+}
 
-	http.HandleFunc("/dos", func(w http.ResponseWriter, r *http.Request) {
-		_, _ = fmt.Fprintln(w, "hola mundo", "dos")
-	})
+func Holay(w http.ResponseWriter, r *http.Request) {
+	_, _ = fmt.Fprintf(w, "hola mundo2")
+}
 
-	http.HandleFunc("/tres", func(w http.ResponseWriter, r *http.Request) {
-		http.NotFound(w, r)
-	})
+func mainn() {
 
-	http.HandleFunc("/error", func(w http.ResponseWriter, r *http.Request) {
-		http.Error(w, "ESTE ES UN ERROR", http.StatusConflict)
-	})
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", Holax)
+	http.HandleFunc("/", Holay) //DefaultServerMux
 
-	http.HandleFunc("/method", func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case "GET":
-			_, _ = fmt.Fprintln(w, "GET")
-		case "POST":
-			_, _ = fmt.Fprintln(w, "POST")
-		case "PUT":
-			_, _ = fmt.Fprintln(w, "PUT")
-		case "DELETE":
-			_, _ = fmt.Fprintln(w, "DELETE")
-		default:
-			http.Error(w, "metodo no valido", http.StatusBadRequest)
-		}
-
-		//_, _ = fmt.Fprintln(w, "hola mundo")
-
-	})
-
-	log.Fatal(http.ListenAndServe("localhost:3000", nil))
+	server := &http.Server{
+		Addr: "localhost:3000",
+		//Handler: nil, //si es nil se utiliza DefaultServerMux
+		Handler: mux,
+	}
+	log.Fatal(server.ListenAndServe())
 }
