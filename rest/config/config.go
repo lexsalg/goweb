@@ -25,7 +25,9 @@ func init() {
 }
 
 func (c *DBConfig) dsn() string {
-	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8", c.Username, c.Password, c.Host, c.Port, c.Database)
+	//return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8", c.Username, c.Password, c.Host, c.Port, c.Database)
+	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=true", c.Username, c.Password, c.Host, c.Port, c.Database)
+
 }
 
 func GetDsnDB() string {

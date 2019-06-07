@@ -20,7 +20,6 @@ type Users []User
 func NewUser(username, password, email string) *User {
 	user := &User{Username: username, Password: password, Email: email}
 	return user
-
 }
 
 func CreateUser(username, password, email string) *User {

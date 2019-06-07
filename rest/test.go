@@ -1,15 +1,26 @@
 package main
 
-import "github.com/lexsalg/goweb/rest/models"
+import (
+	"fmt"
+	"github.com/lexsalg/goweb/rest/orm"
+)
 
 func main() {
-	//_ = os.Setenv("HOST", "localhost")
-	//_ = os.Unsetenv("HOST" +
-	//	"")
-	//env := os.Getenv("HOST")
-	//fmt.Println(env)
-	models.CreateConnection()
-	models.Ping()
-	models.CloseConnection()
+
+	orm.CreateConnection()
+	orm.CreateTables()
+
+	user := orm.NewUser("alexis orm", "123", "xel.salg@gmail.com")
+	user.Save()
+
+	users := orm.GetUsers()
+	fmt.Println(users)
+
+	user = orm.GetUser(1)
+	user.Username = "cambio nombre"
+	user.Save()
+	fmt.Println(user)
+	user.Delete()
+	orm.CloseConnection()
 
 }
