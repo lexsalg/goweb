@@ -1,11 +1,10 @@
 package models
 
-import "github.com/pkg/errors"
-
 type User struct {
-	Id       int    `json:"id"`
+	Id       int64  `json:"id"`
 	Username string `json:"username"`
 	Password string `json:"password"`
+	Email    string `json:"email"`
 }
 
 const userSchema string = `CREATE TABLE users(
@@ -17,44 +16,66 @@ const userSchema string = `CREATE TABLE users(
 
 type Users []User
 
-var users = make(map[int]User)
+// constructor
+func NewUser(username, password, email string) *User {
+	user := &User{Username: username, Password: password, Email: email}
+	return user
 
-func SetDefaultUser() {
-	user := User{1, "lexsalg", "123"}
-	users[user.Id] = user
+}
+
+func CreateUser(username, password, email string) *User {
+	user := NewUser(username, password, email)
+	user.Save()
+	return user
 }
 
 func GetUsers() Users {
-	list := Users{}
-	for _, user := range users {
-		list = append(list, user)
+	users := Users{}
+	sql := "SELECT id, username, password, email FROM users"
+	rows, _ := Query(sql)
+
+	for rows.Next() {
+		o := User{}
+		_ = rows.Scan(&o.Id, &o.Username, &o.Password, &o.Email)
+		users = append(users, o)
 	}
-	return list
+	return users
 }
 
-func GetUser(id int) (User, error) {
-	if user, ok := users[id]; ok {
-		return user, nil
+func GetUser(id int) *User {
+	u := NewUser("", "", "")
+	sql := "SELECT id, username, password, email FROM users WHERE id=?"
+	rows, _ := Query(sql, id)
+
+	for rows.Next() {
+		_ = rows.Scan(&u.Id, &u.Username, &u.Password, &u.Email)
 	}
-	return User{}, errors.New("Usuario No existe en map.")
+
+	return u
 }
 
-// SaveUser Guarda un usuario
-func SaveUser(user User) User {
-	user.Id = len(users) + 1
-	users[user.Id] = user
-	return user
+func (u *User) Save() {
+	if u.Id == 0 {
+		u.insert()
+	} else {
+		u.update()
+	}
 }
 
-// UpdateUser Actualiza un usuario
-func UpdateUser(user User, username, password string) User {
-	user.Username = username
-	user.Password = password
-	users[user.Id] = user
-	return user
+func (u *User) Delete() {
+	sql := `DELETE FROM users WHERE id=?`
+	_, _ = Exec(sql, u.Id)
 }
 
-// DeleteUser Elimina un usuario
-func DeleteUser(userId int) {
-	delete(users, userId)
+func (u *User) insert() {
+	sql := `INSERT users SET username=?, password=?, email=?`
+	res, _ := Exec(sql, u.Username, u.Password, u.Email)
+	u.Id, _ = res.LastInsertId()
+}
+
+func (u *User) update() {
+	sql := `UPDATE users SET username=?, password=?, email=?`
+	_, _ = Exec(sql, u.Username, u.Password, u.Email)
+	//res, _ := Exec(sql, u.Username, u.Password, u.Email)
+	//u.Id, _ = res.LastInsertId()
 }

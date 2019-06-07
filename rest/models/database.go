@@ -35,22 +35,6 @@ func Ping() {
 	}
 }
 
-func dsn() string {
-	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", username, password, host, port, database)
-}
-
-func existsTable(tableName string) bool {
-	query := fmt.Sprintf("SHOW TABLES LIKE '%s' ", tableName)
-	rows, _ := Query(query)
-	return rows.Next()
-}
-
-func createTable(tableName, schema string) {
-	if !existsTable(tableName) {
-		_, _ = Exec(schema)
-	}
-}
-
 func CreateTables() {
 	createTable("users", userSchema)
 }
@@ -70,3 +54,31 @@ func Query(query string, args ...interface{}) (*sql.Rows, error) {
 	}
 	return rows, err
 }
+
+/*---------------------------------------------------------------------------------------------*/
+func dsn() string {
+	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", username, password, host, port, database)
+}
+
+func existsTable(tableName string) bool {
+	query := fmt.Sprintf("SHOW TABLES LIKE '%s' ", tableName)
+	rows, _ := Query(query)
+	return rows.Next()
+}
+
+func createTable(tableName, schema string) {
+	if !existsTable(tableName) {
+		_, _ = Exec(schema)
+	} else {
+		truncateTable(tableName)
+	}
+
+}
+
+func truncateTable(tableName string) {
+	query := fmt.Sprintf("TRUNCATE %s", tableName)
+	_, _ = Exec(query)
+
+}
+
+/*---------------------------------------------------------------------------------------------*/
