@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"fmt"
+	"encoding/json"
 	"github.com/gorilla/mux"
 	"github.com/lexsalg/goweb/rest/models"
 	"net/http"
@@ -9,37 +9,62 @@ import (
 )
 
 func GetAll(w http.ResponseWriter, r *http.Request) {
-	_, _ = fmt.Fprintf(w, "LISTADO DE USUARIOS")
+	models.SendData(w, models.GetUsers())
 }
 
 func Get(w http.ResponseWriter, r *http.Request) {
 
-	//xml
-	//user := models.User{Id: 1, Username: "lexsalg", Password: "123"}
-	//w.Header().Set("Content-Type", "text/xml")
-	//x, _ := xml.Marshal(&user)
-	//_, _ = fmt.Fprintf(w, string(x))
-
-	params := mux.Vars(r)
-	userId, _ := strconv.Atoi(params["id"])
-	res := models.DefaultResponse(w)
-	user, err := models.GetUser(userId)
-	if err != nil {
-		res.NotFound()
+	if user, err := getByRequest(r); err != nil {
+		models.SendNotFound(w)
 	} else {
-		res.Data = user
+		models.SendData(w, user)
 	}
-	res.Send()
 }
 
 func Create(w http.ResponseWriter, r *http.Request) {
-	_, _ = fmt.Fprintf(w, "crear USUARIO")
+	user := models.User{}
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&user); err != nil {
+		models.SendUnprocessableEntity(w)
+	} else {
+		models.SendData(w, models.SaveUser(user))
+	}
 }
 
 func Update(w http.ResponseWriter, r *http.Request) {
-	_, _ = fmt.Fprintf(w, "update USUARIO")
+	user, err := getByRequest(r)
+	if err != nil {
+		models.SendNotFound(w)
+		return
+	}
+
+	u := models.User{}
+	decoder := json.NewDecoder(r.Body)
+
+	if err := decoder.Decode(&u); err != nil {
+		models.SendUnprocessableEntity(w)
+		return
+	}
+
+	user = models.UpdateUser(user, u.Username, u.Password)
+	models.SendData(w, user)
 }
 
 func Delete(w http.ResponseWriter, r *http.Request) {
-	_, _ = fmt.Fprintf(w, "delete USUARIO")
+	if user, err := getByRequest(r); err != nil {
+		models.SendNotFound(w)
+	} else {
+		models.DeleteUser(user.Id)
+		models.SendNoContent(w)
+	}
+}
+
+func getByRequest(r *http.Request) (models.User, error) {
+	params := mux.Vars(r)
+	userId, _ := strconv.Atoi(params["id"])
+	if user, err := models.GetUser(userId); err != nil {
+		return user, err
+	} else {
+		return user, nil
+	}
 }
