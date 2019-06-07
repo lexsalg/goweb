@@ -8,11 +8,12 @@ type User struct {
 	Password string `json:"password"`
 }
 
-type UserXml struct {
-	Id       int    `xml:"id"`
-	Username string `xml:"username"`
-	Password string `xml:"password"`
-}
+const userSchema string = `CREATE TABLE users(
+    	id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    	username VARCHAR(30) NOT NULL,
+    	password VARCHAR(64) NOT NULL,
+    	email VARCHAR(40),
+    	created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP )`
 
 type Users []User
 
