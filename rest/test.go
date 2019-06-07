@@ -1,22 +1,15 @@
 package main
 
-import (
-	"fmt"
-	"github.com/lexsalg/goweb/rest/models"
-)
+import "github.com/lexsalg/goweb/rest/models"
 
 func main() {
+	//_ = os.Setenv("HOST", "localhost")
+	//_ = os.Unsetenv("HOST" +
+	//	"")
+	//env := os.Getenv("HOST")
+	//fmt.Println(env)
 	models.CreateConnection()
 	models.Ping()
-	models.CreateTables()
-
-	models.CreateUser("alexis1", "123", "xel.salg@gmail.com")
-	models.CreateUser("alexis2", "123", "xel.salg@gmail.com")
-	models.CreateUser("alexis3", "123", "xel.salg@gmail.com")
-
-	users := models.GetUsers()
-	fmt.Println(users)
-
 	models.CloseConnection()
 
 }

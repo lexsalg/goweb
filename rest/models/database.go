@@ -3,6 +3,7 @@ package models
 import (
 	"database/sql"
 	"fmt"
+	"github.com/lexsalg/goweb/rest/config"
 	"log"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -10,14 +11,9 @@ import (
 
 var db *sql.DB
 
-const username string = "root"
-const password string = "root"
-const host string = "localhost"
-const port int = 3306
-const database string = "goweb"
-
 func CreateConnection() {
-	if conn, err := sql.Open("mysql", dsn()); err != nil {
+	dsn := config.GetDsnDB()
+	if conn, err := sql.Open("mysql", dsn); err != nil {
 		panic(err)
 	} else {
 		db = conn
@@ -56,9 +52,6 @@ func Query(query string, args ...interface{}) (*sql.Rows, error) {
 }
 
 /*---------------------------------------------------------------------------------------------*/
-func dsn() string {
-	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", username, password, host, port, database)
-}
 
 func existsTable(tableName string) bool {
 	query := fmt.Sprintf("SHOW TABLES LIKE '%s' ", tableName)
