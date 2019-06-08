@@ -6,30 +6,34 @@ import (
 )
 
 type DBConfig struct {
-	Username string
-	Password string
-	Host     string
-	Port     int
-	Database string
+	username string
+	password string
+	host     string
+	port     int
+	database string
+	debug    bool
 }
 
 var database *DBConfig
 
 func init() {
 	database = &DBConfig{}
-	database.Username = gonv.GetStringEnv("USERNAME", "root")
-	database.Password = gonv.GetStringEnv("PASSWORD", "root")
-	database.Host = gonv.GetStringEnv("HOST", "localhost")
-	database.Port = gonv.GetIntEnv("PORT", 3306)
-	database.Database = gonv.GetStringEnv("DATABASE", "goweb")
+	database.username = gonv.GetStringEnv("USERNAME", "root")
+	database.password = gonv.GetStringEnv("PASSWORD", "root")
+	database.host = gonv.GetStringEnv("HOST", "localhost")
+	database.port = gonv.GetIntEnv("PORT", 3306)
+	database.database = gonv.GetStringEnv("DATABASE", "goweb")
+	database.debug = gonv.GetBoolEnv("DEBUG", true)
 }
 
 func (c *DBConfig) dsn() string {
-	//return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8", c.Username, c.Password, c.Host, c.Port, c.Database)
-	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=true", c.Username, c.Password, c.Host, c.Port, c.Database)
-
+	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=true", c.username, c.password, c.host, c.port, c.database)
 }
 
 func GetDsnDB() string {
 	return database.dsn()
+}
+
+func GetDebug() bool {
+	return database.debug
 }

@@ -10,8 +10,19 @@ import (
 )
 
 var db *sql.DB
+var debug bool
+
+func init() {
+	CreateConnection()
+	debug = config.GetDebug()
+}
 
 func CreateConnection() {
+
+	if GetConnection() != nil {
+		return
+	}
+
 	dsn := config.GetDsnDB()
 	if conn, err := sql.Open("mysql", dsn); err != nil {
 		panic(err)
@@ -23,6 +34,10 @@ func CreateConnection() {
 func CloseConnection() {
 	_ = db.Close()
 	fmt.Println("db close connection")
+}
+
+func GetConnection() *sql.DB {
+	return db
 }
 
 func Ping() {
@@ -37,7 +52,7 @@ func CreateTables() {
 
 func Exec(query string, args ...interface{}) (sql.Result, error) {
 	result, err := db.Exec(query, args...)
-	if err != nil {
+	if err != nil && !debug {
 		log.Println(err)
 	}
 	return result, err
@@ -45,10 +60,19 @@ func Exec(query string, args ...interface{}) (sql.Result, error) {
 
 func Query(query string, args ...interface{}) (*sql.Rows, error) {
 	rows, err := db.Query(query, args...)
-	if err != nil {
+	if err != nil && !debug {
 		log.Println(err)
 	}
 	return rows, err
+}
+
+func InsertData(query string, args ...interface{}) (int64, error) {
+	if result, err := Exec(query, args...); err != nil {
+		return int64(0), err
+	} else {
+		id, err := result.LastInsertId()
+		return id, err
+	}
 }
 
 /*---------------------------------------------------------------------------------------------*/
@@ -63,7 +87,7 @@ func createTable(tableName, schema string) {
 	if !existsTable(tableName) {
 		_, _ = Exec(schema)
 	} else {
-		truncateTable(tableName)
+		truncateTable(tableName) // esto borrar, porque sino tus tabasl se van a borrar
 	}
 
 }
