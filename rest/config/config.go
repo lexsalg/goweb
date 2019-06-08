@@ -63,3 +63,12 @@ func DsnDB() string {
 func Debug() bool {
 	return server.debug
 }
+
+func DirTemplate() string {
+	return "templates/**/*.html"
+
+}
+
+func DirTemplateError() string {
+	return "templates/error.html"
+}
