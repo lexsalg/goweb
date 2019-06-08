@@ -3,7 +3,7 @@ package models
 import (
 	"database/sql"
 	"fmt"
-	"github.com/lexsalg/goweb/rest/config"
+	"github.com/lexsalg/goweb/config"
 	"log"
 
 	_ "github.com/go-sql-driver/mysql"

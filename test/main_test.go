@@ -2,7 +2,7 @@ package test
 
 import (
 	"fmt"
-	"github.com/lexsalg/goweb/rest/models"
+	"github.com/lexsalg/goweb/models"
 	"os"
 	"testing"
 )

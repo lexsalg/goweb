@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"github.com/lexsalg/goweb/rest/config"
+	"github.com/lexsalg/goweb/config"
 	"html/template"
 	"net/http"
 )

@@ -3,7 +3,7 @@ package v1
 import (
 	"encoding/json"
 	"github.com/gorilla/mux"
-	"github.com/lexsalg/goweb/rest/models"
+	"github.com/lexsalg/goweb/models"
 	"github.com/pkg/errors"
 	"net/http"
 	"strconv"

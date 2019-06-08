@@ -4,7 +4,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 
-	"github.com/lexsalg/goweb/rest/config"
+	"github.com/lexsalg/goweb/config"
 )
 
 var db *gorm.DB

@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"github.com/lexsalg/goweb/rest/utils"
+	"github.com/lexsalg/goweb/utils"
 	"net/http"
 )
 

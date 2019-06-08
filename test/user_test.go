@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/VividCortex/mysqlerr"
 	"github.com/go-sql-driver/mysql"
-	"github.com/lexsalg/goweb/rest/models"
+	"github.com/lexsalg/goweb/models"
 	"math/rand"
 	"testing"
 	"time"

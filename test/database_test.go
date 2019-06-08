@@ -3,7 +3,7 @@ package test
 import (
 	"testing"
 
-	"github.com/lexsalg/goweb/rest/models"
+	"github.com/lexsalg/goweb/models"
 )
 
 func TestConecction(t *testing.T) {

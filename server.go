@@ -1,9 +1,9 @@
-package main
+package goweb
 
 import (
-	"github.com/lexsalg/goweb/rest/config"
-	"github.com/lexsalg/goweb/rest/handlers"
-	"github.com/lexsalg/goweb/rest/handlers/api/v1"
+	"github.com/lexsalg/goweb/config"
+	"github.com/lexsalg/goweb/handlers"
+	"github.com/lexsalg/goweb/handlers/api/v1"
 	"log"
 	"net/http"
 
