@@ -14,7 +14,7 @@ var debug bool
 
 func init() {
 	CreateConnection()
-	debug = config.GetDebug()
+	debug = config.Debug()
 }
 
 func CreateConnection() {
@@ -23,7 +23,7 @@ func CreateConnection() {
 		return
 	}
 
-	dsn := config.GetDsnDB()
+	dsn := config.DsnDB()
 	if conn, err := sql.Open("mysql", dsn); err != nil {
 		panic(err)
 	} else {

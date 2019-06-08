@@ -1,9 +1,16 @@
 package config
 
-import (
-	"fmt"
-	"github.com/eduardogpg/gonv"
-)
+import "fmt"
+
+type Config interface {
+	url() string
+}
+
+type ServerConfig struct {
+	host  string
+	port  int
+	debug bool
+}
 
 type DBConfig struct {
 	username string
@@ -14,26 +21,45 @@ type DBConfig struct {
 	debug    bool
 }
 
+var server *ServerConfig
 var database *DBConfig
 
 func init() {
+
+	server = &ServerConfig{}
+	server.host = StringEnv("HOST", "localhost")
+	server.port = IntEnv("PORT", 5000)
+	server.debug = BoolEnv("DEBUG", true)
+
 	database = &DBConfig{}
-	database.username = gonv.GetStringEnv("USERNAME", "root")
-	database.password = gonv.GetStringEnv("PASSWORD", "root")
-	database.host = gonv.GetStringEnv("HOST", "localhost")
-	database.port = gonv.GetIntEnv("PORT", 3306)
-	database.database = gonv.GetStringEnv("DATABASE", "goweb")
-	database.debug = gonv.GetBoolEnv("DEBUG", true)
+	database.username = StringEnv("DBUSERNAME", "root")
+	database.password = StringEnv("DBPASSWORD", "root")
+	database.host = StringEnv("DBHOST", "localhost")
+	database.port = IntEnv("DBPORT", 3306)
+	database.database = StringEnv("DBNAME", "goweb")
+	database.debug = BoolEnv("DBDEBUG", true)
 }
 
-func (c *DBConfig) dsn() string {
+func (s *ServerConfig) url() string {
+	return fmt.Sprintf("%s:%d", s.host, s.port)
+}
+
+func (c *DBConfig) url() string {
 	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=true", c.username, c.password, c.host, c.port, c.database)
 }
 
-func GetDsnDB() string {
-	return database.dsn()
+func UrlServer() string {
+	return server.url()
 }
 
-func GetDebug() bool {
-	return database.debug
+func ServerPort() int {
+	return server.port
+}
+
+func DsnDB() string {
+	return database.url()
+}
+
+func Debug() bool {
+	return server.debug
 }

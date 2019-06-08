@@ -133,8 +133,8 @@ func (u *User) insert() error {
 }
 
 func (u *User) update() error {
-	sql := `UPDATE users SET username=?, password=?, email=?`
-	_, err := Exec(sql, u.Username, u.Password, u.Email)
+	sql := `UPDATE users SET username=?, password=?, email=? WHERE id=?`
+	_, err := Exec(sql, u.Username, u.Password, u.Email, u.Id)
 	return err
 }
 

@@ -1,9 +1,10 @@
-package handlers
+package v1
 
 import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"github.com/lexsalg/goweb/rest/models"
+	"github.com/pkg/errors"
 	"net/http"
 	"strconv"
 )
@@ -13,7 +14,6 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 }
 
 func Get(w http.ResponseWriter, r *http.Request) {
-
 	if user, err := getByRequest(r); err != nil {
 		models.SendNotFound(w)
 	} else {
@@ -22,13 +22,22 @@ func Get(w http.ResponseWriter, r *http.Request) {
 }
 
 func Create(w http.ResponseWriter, r *http.Request) {
-	user := models.User{}
+	user := &models.User{}
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&user); err != nil {
 		models.SendUnprocessableEntity(w)
-	} else {
-		models.SendData(w, models.SaveUser(user))
+		return
 	}
+	if err := user.Valid(); err != nil {
+		models.SendUnprocessableEntity(w)
+		return
+	}
+	_ = user.SetPassword(user.Password)
+	if err := user.Save(); err != nil {
+		models.SendUnprocessableEntity(w)
+		return
+	}
+	models.SendData(w, user)
 }
 
 func Update(w http.ResponseWriter, r *http.Request) {
@@ -40,13 +49,22 @@ func Update(w http.ResponseWriter, r *http.Request) {
 
 	u := models.User{}
 	decoder := json.NewDecoder(r.Body)
-
 	if err := decoder.Decode(&u); err != nil {
 		models.SendUnprocessableEntity(w)
 		return
 	}
+	if err := user.Valid(); err != nil {
+		models.SendUnprocessableEntity(w)
+		return
+	}
+	user.Username = u.Username
+	user.Email = u.Email
+	_ = user.SetPassword(u.Password)
 
-	user = models.UpdateUser(user, u.Username, u.Password)
+	if err := user.Save(); err != nil {
+		models.SendUnprocessableEntity(w)
+		return
+	}
 	models.SendData(w, user)
 }
 
@@ -54,17 +72,18 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 	if user, err := getByRequest(r); err != nil {
 		models.SendNotFound(w)
 	} else {
-		models.DeleteUser(user.Id)
+		_ = user.Delete()
 		models.SendNoContent(w)
 	}
 }
 
-func getByRequest(r *http.Request) (models.User, error) {
+func getByRequest(r *http.Request) (*models.User, error) {
 	params := mux.Vars(r)
 	userId, _ := strconv.Atoi(params["id"])
-	if user, err := models.GetUser(userId); err != nil {
-		return user, err
-	} else {
-		return user, nil
+	user := models.GetUserById(userId)
+	if user.Id == 0 {
+		return user, errors.New("El usuario no existe.")
 	}
+	return user, nil
+
 }
