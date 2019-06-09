@@ -1,12 +1,44 @@
 {{define "app/index"}}
+
     <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>INDEX</title>
-    </head>
+    <html lang="es">
+    {{template  "help/head" "Inicio" }}
     <body>
-    <h1>HOLA A INDEX</h1>
+
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <a href="/"><img src="../../assets/img/logo.png" alt="logo" id="logo"></a>
+        <a class="navbar-brand" href="/"> Go Web </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+                aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav mr-auto">
+            </ul>
+            <ul class="nav navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/users/new"><span class="fas fa-user"></span> Sign Up</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/users/login"><span class="fas fa-sign-in-alt"></span> Login</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+
+    <main role="main" class="container">
+        <div class="jumbotron">
+            <h1>Navbar example</h1>
+
+        </div>
+    </main>
+
+    <script type="text/javascript" src="/assets/js/jquery.slim.min.js"></script>
+    <script type="text/javascript" src="/assets/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="/assets/js/hola.js"></script>
     </body>
     </html>
+
+
 {{end}}

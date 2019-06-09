@@ -1,6 +1,8 @@
 package config
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Config interface {
 	url() string
@@ -71,4 +73,13 @@ func DirTemplate() string {
 
 func DirTemplateError() string {
 	return "templates/error.html"
+}
+
+func DirAssets() string {
+	return "assets"
+}
+
+func PrefixAssets() string {
+	return "/assets/"
+
 }
