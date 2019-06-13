@@ -1,13 +1,18 @@
 {{define "users/edit"}}
-    <!DOCTYPE html>
-    <html lang="es">
-    <head>
-        <title>Editar Usuario</title>
-        {{template "help/bootstrap"}}
-        <link rel="stylesheet" href="../../assets/css/users/new.css">
-    </head>
+<!DOCTYPE html>
+<html lang="es">
 
-    <body>
+<head>
+    <title>Editar Usuario</title>
+    <meta charset="utf-8">
+    {{template "help/bootstrap"}}
+    <link rel="stylesheet" href="../../static/css/users/new.css">
+    <link rel="stylesheet" href="../../static/css/styles.css">
+</head>
+
+<body>
+
+    {{template "help/navbar"}}
 
     <div id='stars'></div>
     <div id='stars2'></div>
@@ -20,36 +25,42 @@
                     <div class="card-body">
                         <h5 class="card-title text-center">Editar Usuario</h5>
                         {{ if .Error}}
-                            <div class="alert alert-danger">
-                                <strong>{{.Error}}</strong>
-                            </div>
+                        <div class="alert alert-danger">
+                            <strong>{{.Error}}</strong>
+                        </div>
                         {{end}}
-                        <form class="form-signin" method="post" action="/users/edit">
+                        <form class="form-signin" method="post"
+                              action="/users/edit">
                             <div class="form-label-group">
                                 <input name="username" id="username" type="text"
                                        value="{{.User.Username}}"
-                                       class="form-control" placeholder="Usuario" required autofocus>
+                                       class="form-control"
+                                       placeholder="Usuario" required autofocus>
                                 <label for="username">Usuario</label>
                             </div>
                             <div class="form-label-group">
                                 <input name="email" id="email" type="email"
                                        value="{{.User.Email}}"
-                                       class="form-control" placeholder="Email" required>
+                                       class="form-control" placeholder="Email"
+                                       required>
                                 <label for="email">Email</label>
                             </div>
-                            <button type="submit" class="btn btn-lg btn-primary btn-block text-uppercase">
+                            <button type="submit"
+                                    class="btn btn-lg btn-primary btn-block text-uppercase">
                                 Editar
                             </button>
                         </form>
                     </div>
 
-                    <a href="/users/logout" type="button" class="btn btn-sm btn-warning btn-block text-uppercase">
+                    <a href="/users/logout" type="button"
+                       class="btn btn-sm btn-warning btn-block text-uppercase">
                         Cerrar Sesion
                     </a>
                 </div>
             </div>
         </div>
     </div>
-    </body>
-    </html>
+</body>
+
+</html>
 {{end}}

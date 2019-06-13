@@ -1,0 +1,40 @@
+{{define "help/navbar"}}
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <a href="/"><img src="../../static/img/logo.png" alt="logo"
+             id="logo"></a>
+    <a class="navbar-brand" href="/"> Go Web </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarCollapse"
+            aria-controls="navbarCollapse" aria-expanded="false"
+            aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/correo-else/">
+                    <span class="fas fa-sign-in-alt"></span> Correo
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/tramite/">
+                    <span class="fas fa-sign-in-alt"></span> Tramite
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/clima/">
+                    <span class="fas fa-sign-in-alt"></span> Clima
+                </a>
+            </li>
+        </ul>
+        <ul class="nav navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/users/logout">
+                    <span class="fas fa-sign-in-alt"></span> Cerrar Sesión
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+{{end}}
